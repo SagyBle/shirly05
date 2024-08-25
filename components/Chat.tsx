@@ -5,16 +5,27 @@ import io from "socket.io-client";
 const socket = io("http://localhost:3001/");
 
 function Chat() {
+  const [inputRoomNumber, setInputRoomNumber] = useState("");
   const [roomNumber, setRoomNumber] = useState("");
   const [value, setValue] = useState("");
+
   const sendMessage = async () => {
-    socket.emit("send_message", { value });
+    socket.emit("send_message", { value, roomNumber });
+  };
+  const joinRoom = async () => {
+    console.log("pressed join room");
+
+    setRoomNumber(inputRoomNumber);
+    socket.emit("join_room", { roomNumber: inputRoomNumber });
   };
 
   useEffect(() => {
     socket.on("receive_message", (data) => {
       alert(`received: ${data.value}`);
     });
+    return () => {
+      socket.off("receive_message");
+    };
   }, [socket]);
   return (
     <div>
@@ -22,14 +33,14 @@ function Chat() {
       <div>
         <input
           onChange={(e) => {
-            setRoomNumber(e.target.value);
+            setInputRoomNumber(e.target.value);
           }}
           type="text"
           placeholder="Enter Room Number..."
         />
         <button
           onClick={() => {
-            console.log("join this room:", roomNumber);
+            joinRoom();
           }}
         >
           Join Room
@@ -43,7 +54,6 @@ function Chat() {
         />
         <button onClick={sendMessage}>Send Message</button>
       </div>
-      <p>{value}</p>
     </div>
   );
 }
