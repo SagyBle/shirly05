@@ -1,7 +1,9 @@
 "use client";
 
 import Chat from "@/components/Chat";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { getDataFromServer } from "@/services/apiService";
+import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -18,6 +20,7 @@ export default function Home() {
   return (
     <div>
       <h1>{header}</h1>
+      <ThemeSwitcher />
       <Chat />
     </div>
   );
